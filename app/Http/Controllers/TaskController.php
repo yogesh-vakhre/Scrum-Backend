@@ -58,6 +58,16 @@ class TaskController extends Controller
            return $this->onError(404,'Validation Error.',$errors);
         }
         
+        // Return errors if project not found error occur.
+        $project = Project::find($request->project_id);
+        if (empty($project)) {        
+            return $this->onError(404,'Project not found');
+        }
+        // Return errors if user not found error occur.
+        $user = User::find($request->user_id);
+        if (empty($user )) {        
+            return $this->onError(404,'User not found');
+        }
         $task = Task::create($request->all());
               
         return $this->onSuccess($task, 'Task Created',201);
@@ -116,6 +126,17 @@ class TaskController extends Controller
             return $this->onError(404,'Validation Error.',$errors);
         }
         
+        // Return errors if project not found error occur.
+        $project = Project::find($request->project_id);
+        if (empty($project)) {        
+            return $this->onError(404,'Project not found');
+        }
+        // Return errors if user not found error occur.
+        $user = User::find($request->user_id);
+        if (empty($user )) {        
+            return $this->onError(404,'User not found');
+        }
+
         // Update project                
         $task->update($data);                
         return $this->onSuccess($task, 'Task Updated');

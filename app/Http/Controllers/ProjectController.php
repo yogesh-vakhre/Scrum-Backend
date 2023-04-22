@@ -112,7 +112,7 @@ class ProjectController extends Controller
         // Update project                
         $project->update($data);
               
-        return $this->onSuccess($project, 'Project Updated',201);             
+        return $this->onSuccess($project, 'Project Updated');             
     }
 
     /**
@@ -125,10 +125,7 @@ class ProjectController extends Controller
     {
         // Delete associated tasks
         $project->tasks()->delete();
-
-        // Delete associated user
-        $project->user()->delete();
-
+       
         // Delete the specific project data
         $project->delete();
         return $this->onSuccess($project, 'Project Deleted');        
