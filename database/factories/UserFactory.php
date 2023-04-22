@@ -14,12 +14,15 @@ class UserFactory extends Factory
      */
     public function definition()
     {
+        //uniqueName()
         return [
             'name' => $this->faker->name(),
+            'username' => $this->faker->unique()->username(),
             'email' => $this->faker->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'remember_token' => Str::random(10),
+            'role'=>3,
         ];
     }
 
@@ -35,5 +38,26 @@ class UserFactory extends Factory
                 'email_verified_at' => null,
             ];
         });
+    }
+
+    /**
+     * Generate a unique project name.
+     *
+     * @return string
+     */
+    protected function uniqueName()
+    {
+        // Generate a unique name
+        $username = $this->faker->unique()->username;
+
+        // Check if the generated name already exists in the database
+        $count = User::where('username', $username)->count();
+
+        // If the generated name already exists, regenerate it
+        if ($count > 0) {
+            return $this->uniqueName();
+        }
+
+        return $username;
     }
 }

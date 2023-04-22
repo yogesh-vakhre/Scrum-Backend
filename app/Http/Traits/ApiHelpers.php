@@ -7,6 +7,52 @@ trait ApiHelpers
 {
 
     /**
+     * Check IF Admin logged.
+     *
+     * @param array $user
+     * @return bool
+     */
+    protected function isAdmin($user): bool
+    {
+        if (!empty($user)) {
+            return $user->tokenCan('ADMIN');
+        }
+
+        return false;
+    }
+
+    /**
+     * Check IF Product Owner logged.
+     *
+     * @param array $user
+     * @return bool
+     */
+    protected function isProductOwner($user): bool
+    {
+
+        if (!empty($user)) {
+            return $user->tokenCan('PRODUCT_OWNER');
+        }
+
+        return false;
+    }
+
+    /**
+     * Check IF Team Member logged.
+     *
+     * @param array $user
+     * @return bool
+     */
+    protected function isTeamMember($user): bool
+    {
+        if (!empty($user)) {
+            return $user->tokenCan('TEAM_MEMBER');
+        }
+
+        return false;
+    }
+
+    /**
      * Show the Success Response.
      *
      * @param array $data

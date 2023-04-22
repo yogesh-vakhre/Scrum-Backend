@@ -127,4 +127,36 @@ class AuthController extends Controller
         auth()->user()->tokens()->delete();
         return $this->onSuccess($request->user(), 'User Logged Out Successfully');
     }
+
+    /**
+     * Team member can only change the status of the task assigned to them.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Task  $task
+     * @return \Illuminate\Http\Response
+     */
+    public function teamMemberTaskUpdate(Request $request, $taskid): JsonResponse
+    {
+        $task=$request->user()->tasks()->findOrFail($taskid);
+        $data = $request->only(['status', 'title','description']);
+        // Update project                
+        $task->where('user_id',$request->user()->id)->update($data);                
+        return $this->onSuccess($task, 'Team Member Task Updated');
+    }
+
+    /**
+     * Get all Team member with their associated tasks and projects.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Task  $task
+     * @return \Illuminate\Http\Response
+     */
+    public function teamMemberProjects(Request $request): JsonResponse
+    {        
+       $userId= $request->user()->id;
+       $projects = Project::with(['tasks.user'])->whereHas('tasks.user', function ($query) use ($userId) {
+            $query->where('id', $userId);
+        })->get();     
+        return $this->onSuccess($projects, 'Team Member Assigned Projects All Retrieved');
+    }
 }
