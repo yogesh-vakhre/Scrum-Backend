@@ -18,12 +18,50 @@ class ProjectController extends Controller
     /**
      * Get all projects with their associated tasks and users.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $projects = Project::with('tasks.user')->get();
-        return $this->onSuccess($projects, 'Project All Retrieved');
+         // Get query string parameters
+        $searchKeyword = $request->input('q', ''); // search keyword, default to empty string
+        $pageIndex = $request->input('pageIndex', 0); // page index, default to 0
+        $pageSize = $request->input('pageSize', 3); // page size, default to 3
+        $sortBy = $request->input('sortBy', 'name'); // attribute to sort, default to 'name'
+        $sortDirection = $request->input('sortDirection', 'ASC'); // sort direction, default to 'ASC'
+
+        // Query projects
+        $query = Project::query();
+
+        // Apply search keyword filter
+        if ($searchKeyword) {
+            $query->where('name', 'like', '%' . $searchKeyword . '%');
+        }
+
+        // Apply sorting
+        $query->orderBy($sortBy, $sortDirection);
+
+        // Get total count of projects
+        $totalCount = $query->count();
+
+        // Apply pagination
+        $query->skip($pageIndex * $pageSize)->take($pageSize);
+
+        // Fetch projects
+        $projects = $query->get();
+
+        // Return response
+    
+        return $this->onSuccess([
+                'projects' => $projects->load('tasks.user'),
+                'totalCount' => $totalCount,
+                'pageIndex' => $pageIndex,
+                'pageSize' => $pageSize,
+                'sortBy' => $sortBy,
+                'sortDirection' => $sortDirection,
+            ], 
+            'Project All Retrieved'
+        );
     }
 
     /**
