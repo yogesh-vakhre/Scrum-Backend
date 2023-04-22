@@ -138,23 +138,7 @@ class AuthController extends Controller
     public function teamMemberTaskUpdate(Request $request, $taskid): JsonResponse
     {
         $task=$request->user()->tasks()->findOrFail($taskid);
-        // Validate request data
-        $validator = Validator::make($request->all(), [
-            'title' => 'required|string|max:255',
-            'description' => 'required|string|max:255',
-            'status' => 'required|string|max:50',
-        ]);
-        // Return errors if validation error occur.
-        if ($validator->fails()) {
-            $errors = $validator->errors();
-            return $this->onError(404,'Validation Error.',$errors);
-        }
-
-        $data = [
-            'title' => $request->title,
-            'description' => $request->description,
-            'status' => $request->status,
-        ];   
+        $data = $request->only(['status', 'title','description']);
         // Update project                
         $task->where('user_id',$request->user()->id)->update($data);                
         return $this->onSuccess($task, 'Team Member Task Updated');
