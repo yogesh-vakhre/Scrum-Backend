@@ -1,0 +1,1126 @@
+openapi: 3.0.0
+info:
+  title: Backend API's Swagger - OpenAPI 3.0
+  description:  Swagger Documentation of Backend API
+  version: 1.0.0
+ 
+servers:
+  - url: http://localhost:8000/api/v1
+ # - url: "{{ config('app.url') }}"
+    description: 'Localhost address'
+tags:
+  - name: Auth
+    description: Operations about Authentication
+    
+  - name: User
+    description: Operations about Users
+
+  - name: Project
+    description: Everything about your Projects
+    
+  - name: Task
+    description: Everything about your Tasks
+    
+paths:
+  /projects:
+    get:
+      tags:
+        - Project
+      summary: Get All Projects
+      description: Get all projects with their associated tasks and users
+      operationId: getAllProjects
+      parameters:
+        - name: q
+          in: path
+          description: search keyword, will search for name
+          required: false
+          schema:
+            type: string
+        - name: pageIndex
+          in: path
+          description: The index of the page to shown
+          required: false
+          schema:
+            type: integer
+        - name: pageSize
+          in: path
+          description: How many items to retur
+          required: false
+          schema:
+            type: integer  
+        - name: sortBy
+          in: path
+          description: Attribute to sort
+          required: false
+          schema:
+            type: string  
+        - name: sortDirection
+          in: path
+          description: Direction of the sort
+          required: false
+          schema:
+            type: string                
+      responses:
+        '200':
+          description: Project All Retrieved
+          content:
+            application/json:                                     
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Project"
+        '401':
+          description: Unauthenticated
+        "500":
+          description: Error         
+      security:
+        - bearerAuth: []
+    post:
+        tags:
+          - Project
+        summary: Add a new project to the store
+        description: Add a new project to the store
+        operationId: storeProject
+        requestBody:
+          description: Create a new Project in the store
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: 'Scrum Backend'
+        responses:
+          '201':
+            description: Project Created
+            content:
+              application/json:                                     
+                schema:
+                  type: object
+                  properties:
+                    status:
+                      type: integer
+                    message:
+                      type: string
+                    data:
+                      type: array
+                      items:                      
+                        $ref: "#/components/schemas/Project"       
+          '401':
+          description: Unauthenticated
+          '404':
+            description: Project not found
+          '405':
+            description: Validation exception
+        security:
+          - bearerAuth: []
+
+  /projects/{id}:
+    get:
+      tags:
+        - Project
+      summary: Find projects by ID
+      description: Returns a single project
+      operationId: getProjectById
+      parameters:
+        - name: id
+          in: path
+          description: ID of project to return
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Project Retrieved
+          content:
+            application/json:                                     
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:                      
+                      $ref: "#/components/schemas/Project"       
+        '401':
+          description: Unauthenticated
+        '404':
+          description: Project not found
+      security:
+        - bearerAuth: []
+    put:
+      tags:
+        - Project
+      summary: Update an existing project
+      description: Update an existing project by Id
+      operationId: updateProject
+      parameters:
+        - name: id
+          in: path
+          description: ID of project to update
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Update an existent project in the store
+        required: true
+        content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: 'Scrum Backend'
+      responses:
+        '200':
+          description: Project Updated
+          content:
+            application/json:                                     
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:                      
+                      $ref: "#/components/schemas/Project"       
+        '401':
+          description: Unauthenticated
+        '404':
+          description: Project not found
+        '405':
+          description: Validation exception
+      security:
+        - bearerAuth: []
+    patch:
+      tags:
+        - Project
+      summary: Update an existing project
+      description: Update an existing project by Id
+      operationId: updatePatchProject
+      parameters:
+        - name: id
+          in: path
+          description: ID of project to update
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Update an existent project in the store
+        required: true
+        content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: 'Scrum Backend'
+      responses:
+        '200':
+          description: Project Updated
+          content:
+            application/json:                                     
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:                      
+                      $ref: "#/components/schemas/Project"       
+        '401':
+          description: Unauthenticated
+        '404':
+          description: Project not found
+        '405':
+          description: Validation exception
+      security:
+        - bearerAuth: []          
+    delete:
+      tags:
+        - Project
+      summary: Deletes a project
+      description: delete a project
+      operationId: deleteProject
+      parameters:        
+        - name: id
+          in: path
+          description: project id to delete
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Project Deleted
+          content:
+            application/json:                                     
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:                      
+                      $ref: "#/components/schemas/Project"
+        '401':
+          description: Unauthenticated
+        '404':
+          description: Project not found
+      security:
+        - bearerAuth: []
+ 
+  /auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Register team member
+      description: This can only be done by the register team member.
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                username:
+                  type: string                   
+                  format: username
+                email:
+                  type: string
+                  format: email                      
+                password:
+                  type: string
+                  format: password
+                role:
+                  type: integer      
+      responses:
+        '201':
+          description: Team Memeber Created
+          content:
+            application/json:                                     
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+                        example: "4|eULVXBa0VRtYc6C3ND5rZe0rvvhO7cUHh83B52jO"
+                      user:                    
+                        $ref: "#/components/schemas/User"
+        '401':
+          description: Unauthorized Access
+        '405':
+          description: Validation exception
+ 
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Logs user into the system
+      description: ''
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: 'johndoie'
+                password:
+                  type: string
+                  format: password
+                  example: 'johndoie@123'
+      responses:
+        '200':
+          description: User Logged In Successfully
+          content:
+            application/json:                                     
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+                        example: "4|eULVXBa0VRtYc6C3ND5rZe0rvvhO7cUHh83B52jO"
+                      user:                    
+                        $ref: "#/components/schemas/User"
+        '403':
+          description: Invalid login details
+        '404':
+          description: Validation exception
+  /auth/logout:
+    post:
+      tags:
+        - Auth
+      summary: Logs out current logged in user session
+      description: ''
+      operationId: logoutUser
+      parameters: []
+      responses:
+        '200':
+          description: User Logged Out Successfully
+          content:
+            application/json:                                     
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:                      
+                      $ref: "#/components/schemas/User"
+        '401':
+          description: Unauthenticated
+        
+      security:
+          - bearerAuth: []
+  /auth/user:
+    get:
+      tags:
+        - Auth
+      summary: Get current user logged in
+      description: ''
+      operationId: getUser
+      parameters: []
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:                                     
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:                      
+                      $ref: "#/components/schemas/User"
+        '401':
+          description: Unauthenticated
+        '404':
+          description: User not found
+      security:
+          - bearerAuth: []
+  /users:
+    get:
+      tags:
+        - User
+      summary: Get All Users
+      description: Get all users with their associated tasks and users
+      operationId: getAllUsers      
+      responses:
+        '200':
+          description: User All Retrieved
+          content:
+            application/json:                                     
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/User"
+        '401':
+          description: Unauthenticated
+        "500":
+          description: Error         
+      security:
+        - bearerAuth: []
+    post:
+        tags:
+          - User
+        summary: Add a new user to the store
+        description: Add a new user to the store
+        operationId: storeUser
+        requestBody:
+          description: Create a new User in the store
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  username:
+                    type: string                   
+                    format: username
+                  email:
+                    type: string
+                    format: email                      
+                  password:
+                    type: string
+                    format: password
+                  role:
+                    type: integer      
+        responses:
+          '201':
+            description: User Created
+            content:
+              application/json:                                     
+                schema:
+                  type: object
+                  properties:
+                    status:
+                      type: integer
+                    message:
+                      type: string
+                    data:
+                      type: array
+                      items:                      
+                        $ref: "#/components/schemas/User"       
+          '401':
+            description: Unauthenticated
+          '404':
+            description: User not found
+          '405':
+            description: Validation exception
+        security:
+          - bearerAuth: []
+
+  /users/{id}:
+    get:
+      tags:
+        - User
+      summary: Find users by ID
+      description: Returns a single user
+      operationId: getUserById
+      parameters:
+        - name: id
+          in: path
+          description: ID of user to return
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: User Retrieved
+          content:
+            application/json:                                     
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:                      
+                      $ref: "#/components/schemas/User"       
+        '401':
+          description: Unauthenticated
+        '404':
+          description: User not found
+      security:
+        - bearerAuth: []
+    put:
+      tags:
+        - User
+      summary: Update an existing User
+      description: Update an existing User by Id
+      operationId: updateUser
+      parameters:
+        - name: id
+          in: path
+          description: ID of User to update
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Update an existent user in the store
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                username:
+                  type: string                   
+                  format: username
+                email:
+                  type: string
+                  format: email                      
+                password:
+                  type: string
+                  format: password
+                role:
+                  type: integer      
+      responses:
+        '200':
+          description: User Updated
+          content:
+            application/json:                                     
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:                      
+                      $ref: "#/components/schemas/User"       
+        '401':
+          description: Unauthenticated
+        '404':
+          description: User not found
+        '405':
+          description: Validation exception
+      security:
+        - bearerAuth: []
+    patch:
+      tags:
+        - User
+      summary: Update an existing User
+      description: Update an existing User by Id
+      operationId: updatePatchUser
+      parameters:
+        - name: id
+          in: path
+          description: ID of User to update
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Update an existent User in the store
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                username:
+                  type: string                   
+                  format: username
+                email:
+                  type: string
+                  format: email                      
+                password:
+                  type: string
+                  format: password
+                role:
+                  type: integer      
+      responses:
+        '200':
+          description: User Updated
+          content:
+            application/json:                                     
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:                      
+                      $ref: "#/components/schemas/User"       
+        '401':
+          description: Unauthenticated
+        '404':
+          description: User not found
+        '405':
+          description: Validation exception
+      security:
+        - bearerAuth: []          
+    delete:
+      tags:
+        - User
+      summary: Deletes a user
+      description: delete a user
+      operationId: deleteUser
+      parameters:        
+        - name: id
+          in: path
+          description: User id to delete
+          required: true
+          schema:
+            type: string 
+            format: uuid
+      responses:
+        '200':
+          description: User Deleted
+          content:
+            application/json:                                     
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:                      
+                      $ref: "#/components/schemas/User"
+        '401':
+          description: Unauthenticated
+        '404':
+          description: User not found
+      security:
+        - bearerAuth: []
+ 
+  /tasks:
+    get:
+      tags:
+        - Task
+      summary: Get All Tasks
+      description: Get all Tasks with their associated tasks and users
+      operationId: getAllTasks      
+      responses:
+        '200':
+          description: Task All Retrieved
+          content:
+            application/json:                                     
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Task"
+        '401':
+          description: Unauthenticated
+        "500":
+          description: Error         
+      security:
+        - bearerAuth: []
+    post:
+        tags:
+          - Task
+        summary: Add a new Task to the store
+        description: Add a new Task to the store
+        operationId: storeTask
+        requestBody:
+          description: Create a new Task in the store
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  description:
+                    type: string                   
+                  status:
+                    type: string
+                    description: Task Status
+                    example: NOT_STARTED
+                    enum:
+                      - NOT_STARTED
+                      - IN_PROGRESS
+                      - READY_FOR_TEST
+                      - COMPLETED                     
+                  project_id:
+                    type: string
+                    format: uuid
+                  user_id:
+                    type: string
+                    format: uuid   
+        responses:
+          '201':
+            description: Task Created
+            content:
+              application/json:                                     
+                schema:
+                  type: object
+                  properties:
+                    status:
+                      type: integer
+                    message:
+                      type: string
+                    data:
+                      type: array
+                      items:                      
+                        $ref: "#/components/schemas/Task"       
+          '401':
+            description: Unauthenticated
+          '404':
+            description: Task not found
+          '405':
+            description: Validation exception
+        security:
+          - bearerAuth: []
+  /tasks/{id}:
+    get:
+      tags:
+        - Task
+      summary: Find Tasks by ID
+      description: Returns a single Task
+      operationId: getTaskById
+      parameters:
+        - name: id
+          in: path
+          description: ID of Task to return
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Task Retrieved
+          content:
+            application/json:                                     
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:                      
+                      $ref: "#/components/schemas/Task"       
+        '401':
+          description: Unauthenticated
+        '404':
+          description: Task not found
+      security:
+        - bearerAuth: []
+    put:
+      tags:
+        - Task
+      summary: Update an existing Task
+      description: Update an existing Task by Id
+      operationId: updateTask
+      parameters:
+        - name: id
+          in: path
+          description: ID of Task to update
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Update an existent Task in the store
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string                   
+                status:
+                  type: string
+                  description: Task Status
+                  example: NOT_STARTED
+                  enum:
+                    - NOT_STARTED
+                    - IN_PROGRESS
+                    - READY_FOR_TEST
+                    - COMPLETED                     
+                project_id:
+                  type: string
+                  format: uuid
+                user_id:
+                  type: string
+                  format: uuid   
+      responses:
+        '200':
+          description: Task Updated
+          content:
+            application/json:                                     
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:                      
+                      $ref: "#/components/schemas/Task"       
+        '404':
+          description: Task not found
+        '405':
+          description: Validation exception
+      security:
+        - bearerAuth: []
+    patch:
+      tags:
+        - Task
+      summary: Update an existing Task
+      description: Update an existing Task by Id
+      operationId: updatePatchTask
+      parameters:
+        - name: id
+          in: path
+          description: ID of Task to update
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Update an existent Task in the store
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string                   
+                status:
+                  type: string
+                  description: Task Status
+                  example: NOT_STARTED
+                  enum:
+                    - NOT_STARTED
+                    - IN_PROGRESS
+                    - READY_FOR_TEST
+                    - COMPLETED                     
+                project_id:
+                  type: string
+                  format: uuid
+                user_id:
+                  type: string
+                  format: uuid   
+
+      responses:
+        '200':
+          description: Task Updated
+          content:
+            application/json:                                     
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:                      
+                      $ref: "#/components/schemas/Task"       
+        '404':
+          description: Task not found
+        '405':
+          description: Validation exception
+      security:
+        - bearerAuth: []          
+    delete:
+      tags:
+        - Task
+      summary: Deletes a Task
+      description: delete a Task
+      operationId: deleteTask
+      parameters:        
+        - name: id
+          in: path
+          description: Task id to delete
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Task Deleted
+          content:
+            application/json:                                     
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:                      
+                      $ref: "#/components/schemas/Task"
+        '404':
+          description: Task not found
+      security:
+        - bearerAuth: []
+ 
+
+
+components:
+  schemas:
+    Task:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid           
+        title:
+          type: string  
+        description:
+          type: string                            
+        status:
+          type: string
+          description: Task Status
+          example: NOT_STARTED
+          enum:
+            - NOT_STARTED
+            - IN_PROGRESS
+            - READY_FOR_TEST
+            - COMPLETED 
+        project_id:
+          type: string  
+          format: uuid              
+        user_id:
+          type: string 
+          format: uuid  
+        created_at:
+          type: string
+          format: date-time 
+        updated_at:
+          type: string
+          format: date-time                      
+     
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: theUser  
+        username:
+          type: string
+          example: theUser
+        email:
+          type: string
+          format: email
+          example: john@email.com
+        email_verified_at:
+          type: string
+          format: date-time 	
+        password:
+          type: string
+          format: password 
+          example: '12345'
+        role:
+          type: integer
+          example: 2 #1 = ADMIN, 2 = PRODUCT_OWNER, 3 = TEAM_MEMBER
+        created_at:
+          type: string
+          format: date-time 
+        updated_at:
+          type: string
+          format: date-time 
+      xml:
+        name: user
+
+    Project:
+      required:
+        - name        
+      type: object
+      properties:
+        id:
+          type: string  
+          format: uuid   
+        name:
+          type: string
+          example: Project name     
+        created_at:
+          type: string
+          format: date-time 
+        updated_at:
+          type: string
+          format: date-time 
+          category:
+#        $ref: '#/components/schemas/Task'       
+      xml:
+        name: project
+  requestBodies:
+    Project:
+      description: Project object that needs to be added to the store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Project'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Project'
+    UserArray:
+      description: List of user object
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/User'
+  securitySchemes:     
+    bearerAuth:            # arbitrary name for the security scheme
+      type: http
+      scheme: bearer

@@ -71,8 +71,7 @@ class UserController extends Controller
         }else{
             $role=['TEAM_MEMBER'];
         }
-        $data['user'] =  $user;     
-        return $this->onSuccess($data, 'User Created',201);             
+        return $this->onSuccess($user, 'User Created',201);             
         
     }
 

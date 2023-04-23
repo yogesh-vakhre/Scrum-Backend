@@ -42,8 +42,8 @@ class AuthController extends Controller
         }
         // Check if validation pass then create user and auth token. Return the auth token
         if ($validator->passes()) {
-            // Check if role is Admin
-            if($request->role ===1){
+            // Check if role is not TEAM MEMBER
+            if($request->role !==3){
                 return $this->onError(401, 'Unauthorized Access');
             }
             $user = User::create([
@@ -55,11 +55,7 @@ class AuthController extends Controller
 
             ]);
 
-            if($user->role===2){
-                $role=['PRODUCT_OWNER'];
-            }else{
-                $role=['TEAM_MEMBER'];
-            }
+            $role=['TEAM_MEMBER'];
             $token = $user->createToken('auth_token',$role)->plainTextToken;
             $data['token'] =  $token;
             $data['user'] =  $user;     
