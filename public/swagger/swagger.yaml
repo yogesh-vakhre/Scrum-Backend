@@ -30,36 +30,35 @@ paths:
       description: Get all projects with their associated tasks and users
       operationId: getAllProjects
       parameters:
-        - name: q
-          in: path
-          description: search keyword, will search for name
-          required: false
+        - in: query
+          name: q
           schema:
             type: string
-        - name: pageIndex
-          in: path
-          description: The index of the page to shown
-          required: false
+          description: Search keyword (default empty string)
+        - in: query
+          name: pageIndex
           schema:
             type: integer
-        - name: pageSize
-          in: path
-          description: How many items to retur
-          required: false
+            default: 0
+          description: Page index (default 0)
+        - in: query
+          name: pageSize
           schema:
-            type: integer  
-        - name: sortBy
-          in: path
-          description: Attribute to sort
-          required: false
+            type: integer
+            default: 3
+          description: Page size (default 3)
+        - in: query
+          name: sortBy
           schema:
-            type: string  
-        - name: sortDirection
-          in: path
-          description: Direction of the sort
-          required: false
+            type: string
+            default: name
+          description: Attribute to sort by (default 'name')
+        - in: query
+          name: sortDirection
           schema:
-            type: string                
+            type: string
+            default: ASC
+          description: Sort direction (default 'ASC')            
       responses:
         '200':
           description: Project All Retrieved
